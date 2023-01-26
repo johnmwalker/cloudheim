@@ -7,7 +7,7 @@ on:
       template_version:
         type: string
         description: 'template_version: The version of the AWS EC2 Launch template'
-        default: '21'
+        default: '22'
 
 jobs:
   deploy:
