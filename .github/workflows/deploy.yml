@@ -1,1 +1,40 @@
 
+name: Launch Cloudheim
+
+on:
+  workflow_dispatch:
+    inputs:
+      template_version:
+        type: string
+        description: 'template_version: The version of the AWS EC2 Launch template'
+        default: '17'
+
+jobs:
+  build:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
+      # - name: Install AWS CLI
+      #   run: |
+      #   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #   unzip awscliv2.zip
+      #   sudo ./aws/install
+
+      - name: Confirm AWS Install
+        run: aws --version
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_CLI_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_CLI_KEY }}
+          aws-region: us-east-1
+
+      - name: Launch EC2 Instance
+        run: |
+          aws ec2 run-instances --launch-template LaunchTemplateId=lt-00b98ae78e8a14de0,Version=${{ inputs.template_version}}
