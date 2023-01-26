@@ -4,8 +4,9 @@
 cd /cloudheim
 
 # Make some dirs
-mkdir -p /home/ubuntu/.config
-mkdir -p /root/.config/rclone/
+mkdir -p /valheim/saves
+# mkdir -p /home/ubuntu/.config
+# mkdir -p /root/.config/rclone/
 
 # Setup the env
 sudo apt-get update
@@ -20,11 +21,12 @@ sudo apt-get install -y docker-compose
 # cp /tmp/rclone.conf /home/ubuntu/.rclone.conf
 
 # Move config file to docker volume location
-cp /cloudheim/valheim_plus.cfg /valheim/
+cp /cloudheim/panerabread/valheim_plus.cfg /valheim/
 
 # Move wold files to docker volume location
 cp -r /cloudheim/panerabread/* /valheim/saves/
 
 # Begin the server uppening
-sudo docker-compose --detach up
+sudo docker-compose up
 
+# less /var/log/cloud-init-output.log # then press capital F
