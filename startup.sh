@@ -20,7 +20,7 @@ sudo apt-get install -y docker-compose
 # cp /tmp/rclone.conf /home/ubuntu/.rclone.conf
 
 # Move config file to docker volume location
-cp /valheim/saves/valheim_plus.cfg /valheim/
+cp /cloudheim/valheim_plus.cfg /valheim/
 
 # Move wold files to docker volume location
 cp -r /cloudheim/panerabread/* /valheim/saves/
