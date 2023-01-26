@@ -3,11 +3,11 @@ name: Shutdown Cloudheim
 
 on:
   workflow_dispatch:
-    inputs:
-      template_version:
-        type: string
-        description: 'template_version: The version of the AWS EC2 Launch template'
-        default: '18'
+    # inputs:
+    #   template_version:
+    #     type: string
+    #     description: 'template_version: The version of the AWS EC2 Launch template'
+    #     default: '23'
 
 jobs:
   shutdown:
@@ -45,7 +45,7 @@ jobs:
           EndOfMessage
 
       - name: Write PEM
-        run: echo ${{ secrets.VALHEIM_GITHUB_PEM }} >> ~/.ssh/my_key.pem
+        run: echo "${{ secrets.VALHEIM_GITHUB_PEM }}" >> ~/.ssh/my_key.pem
 
       - name: Run shutdown
         run: ssh -i ~/.ssh/my_key.pem ${{ steps.ec2.outputs.aws_output }} 'bash -s' < shutdown.sh

@@ -9,17 +9,27 @@ cd /
 # Install git and get the repo
 sudo apt-get update
 sudo apt-get install -y git
-git clone https://github.com/johnmwalker/cloudheim.git
+
+# git config?
+# git config credential.helper store
+# git config credential.helper 'cache --timeout sometimeout'
+# git config --local user.name user
+# git config --local user.email email
+git clone https://user:pat@github.com/johnmwalker/cloudheim.git
 git config --global --add safe.directory /cloudheim
 
 # This isn't good practice long term, but for now, I'm gonna manually include the webhook url and server password in the template
 cd cloudheim
-echo "PASSWORD=mypass" >> env.list
-echo "WEBHOOK_URL=myurl" >> env.list
+echo "PASSWORD=redacted" >> env.list
+echo "WEBHOOK_URL=redacted" >> env.list
 
-# git comfig?
+echo "test" >> test.txt
+git add test.txt
+git commit -m "Test"
+git push 
 
 # Run the startup script in the background
 chmod +x startup.sh
 chmod +x shutdown.sh
 ./startup.sh &
+

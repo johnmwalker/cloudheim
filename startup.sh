@@ -5,6 +5,7 @@ cd /cloudheim
 
 # Make some dirs
 mkdir -p /valheim/saves
+mkdir -p /valheim/backups
 # mkdir -p /home/ubuntu/.config
 # mkdir -p /root/.config/rclone/
 
@@ -28,5 +29,7 @@ cp -r /cloudheim/panerabread/* /valheim/saves/
 
 # Begin the server uppening
 sudo docker-compose up
+
+watch -n 900 "sudo mv `ls -t /valheim/backups/*.db | head -1` /cloudheim/panerabread/panerabread.db; sudo mv `ls -t /valheim/backups/*.fwl | head -1` /cloudheim/panerabread/panerabread.fwl; git add panerabread ; git commit -m 'AUTO: Autosave' ; git push;"
 
 # less /var/log/cloud-init-output.log # then press capital F
