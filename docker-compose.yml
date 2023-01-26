@@ -11,3 +11,4 @@ services:
     volumes:
       - /valheim/saves:/home/steam/.config/unity3d/IronGate/Valheim
       - /valheim/valheim_plus.cfg:/home/steam/valheim/BepInEx/config/valheim_plus.cfg
+      

@@ -1,5 +1,5 @@
 
-name: Launch Cloudheim
+name: Shutdown Cloudheim
 
 on:
   workflow_dispatch:
@@ -7,11 +7,11 @@ on:
       template_version:
         type: string
         description: 'template_version: The version of the AWS EC2 Launch template'
-        default: '21'
+        default: '18'
 
 jobs:
-  deploy:
-    name: Deploy
+  shutdown:
+    name: Shutdown
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -32,10 +32,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_CLI_KEY }}
           aws-region: us-east-1
 
-      - name: Launch EC2 Instance
+      - name: Get EC2 Instance
         id: ec2
         run: |
-          aws_output=`aws ec2 run-instances --count 1 --launch-template LaunchTemplateId=lt-00b98ae78e8a14de0,Version=${{ inputs.template_version }}`
+          aws_output=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicDnsName"`
           echo aws_output="${aws_output}" >> $GITHUB_OUTPUT
 
       - name: Process JSON
@@ -43,5 +43,11 @@ jobs:
           cat << EndOfMessage
           ${{ toJSON(fromJSON(steps.ec2.outputs.aws_output)) }}
           EndOfMessage
+
+      - name: Write PEM
+        run: echo ${{ secrets.VALHEIM_GITHUB_PEM }} >> ~/.ssh/my_key.pem
+
+      - name: Run shutdown
+        run: ssh -i ~/.ssh/my_key.pem ${{ steps.ec2.outputs.aws_output }} 'bash -s' < shutdown.sh
 
 
