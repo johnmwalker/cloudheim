@@ -36,12 +36,3 @@ jobs:
         id: ec2
         run: |
           aws_output=`aws ec2 run-instances --count 1 --launch-template LaunchTemplateId=lt-00b98ae78e8a14de0,Version=${{ inputs.template_version }}`
-          echo aws_output="${aws_output}" >> $GITHUB_OUTPUT
-
-      - name: Process JSON
-        run: |
-          cat << EndOfMessage
-          ${{ toJSON(fromJSON(steps.ec2.outputs.aws_output)) }}
-          EndOfMessage
-
-

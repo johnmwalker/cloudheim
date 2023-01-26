@@ -12,10 +12,10 @@ sudo apt-get install -y git
 git clone https://github.com/johnmwalker/cloudheim.git
 
 # This isn't good practice long term, but for now, I'm gonna manually include the webhook url and server password in the template
+cd cloudheim
 echo "PASSWORD=mypass" >> env.list
 echo "WEBHOOK_URL=myurl" >> env.list
 
 # Run the startup script in the background
-cd cloudheim
 chmod +x startup.sh
 ./startup.sh &
