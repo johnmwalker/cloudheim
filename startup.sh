@@ -33,6 +33,6 @@ cd /cloudheim
 # Begin the server uppening
 docker-compose up -d
 
-watch -n 900 bash -s ./autosave.sh
+sudo watch -n 900 ./autosave.sh
 
 # less /var/log/cloud-init-output.log # then press capital F
