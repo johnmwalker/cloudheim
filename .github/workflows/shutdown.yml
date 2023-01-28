@@ -34,6 +34,6 @@ jobs:
           chmod go= ${{runner.temp}}/.ssh/my_key.pem
 
       - name: Run shutdown
-        run: ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem ubuntu@${{ steps.ec2.outputs.ip }} "sudo /cloudheim/shutdown.sh"
+        run: ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem ubuntu@${{ steps.ec2.outputs.ip }} "cd /cloudheim; sudo git pull; sudo /cloudheim/shutdown.sh"
 
 
