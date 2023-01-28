@@ -33,6 +33,6 @@ jobs:
           echo "${{ secrets.VALHEIM_GITHUB_PEM }}" > ${{runner.temp}}/.ssh/my_key.pem
 
       - name: Run shutdown
-        run: ssh -i ${{runner.temp}}/.ssh/my_key.pem ${{ steps.ec2.outputs.ip }} "sudo /cloudheim/shutdown.sh"
+        run: ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem ${{ steps.ec2.outputs.ip }} "sudo /cloudheim/shutdown.sh"
 
 
