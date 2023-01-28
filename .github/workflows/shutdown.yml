@@ -30,7 +30,9 @@ jobs:
           echo ip="${ip}" >> $GITHUB_OUTPUT
 
       - name: Write PEM
-        run: echo "${{ secrets.VALHEIM_GITHUB_PEM }}" >> ~/.ssh/my_key.pem
+        run: |
+          mkdir -p ${{runner.temp}}/.ssh
+          echo "${{ secrets.VALHEIM_GITHUB_PEM }}" > ${{runner.temp}}/.ssh/my_key.pem
 
       - name: Run shutdown
         run: ssh -i ~/.ssh/my_key.pem ${{ steps.ec2.outputs.ip }} 'bash -s' < sudo shutdown.sh
