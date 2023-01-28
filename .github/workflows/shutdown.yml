@@ -24,8 +24,9 @@ jobs:
       - name: Get EC2 Instance
         id: ec2
         run: |
-          reggie="(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}"
+          reggie="[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}"
           aws_output=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIp"`
+          echo "${aws_output}"
           ip=`[[ ${aws_output} =~ $reggie ]]`
           echo ip="${ip}" >> $GITHUB_OUTPUT
 
