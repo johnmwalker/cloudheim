@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd /cloudheim
+git pull
 
 sudo docker-compose down
 
