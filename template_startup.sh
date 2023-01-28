@@ -10,11 +10,7 @@ cd /
 sudo apt-get update
 sudo apt-get install -y git
 
-# git config?
-# git config credential.helper store
-# git config credential.helper 'cache --timeout sometimeout'
-# git config --local user.name user
-# git config --local user.email email
+# Set up Git
 git clone https://user:pat@github.com/johnmwalker/cloudheim.git
 git config --global --add safe.directory /cloudheim
 
@@ -30,6 +26,5 @@ git push
 
 # Run the startup script in the background
 chmod +x startup.sh
-chmod +x shutdown.sh
-./startup.sh &
+sudo ./startup.sh
 
