@@ -1,11 +1,11 @@
 #!/bin/bash
 
 cd /cloudheim
-git pull
+sudo git pull
 
 sudo docker-compose down
 
 sudo cp -r /valheim/saves/* /cloudheim/panerabread/
-git add panerabread
-git commit -m "AUTO: Shutdown save"
-git push 
+sudo git add panerabread
+sudo git commit -m "AUTO: Shutdown save"
+sudo git push 
