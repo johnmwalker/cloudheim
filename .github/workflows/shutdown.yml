@@ -46,6 +46,6 @@ jobs:
       - name: Terminate EC2
         if: steps.ec2.outputs.ip
         run: |
-          id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].Id" --output text`
+          id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].InstanceId" --output text`
           echo "Terminating instace ID ${id}"
           aws ec2 terminate-instances --instance-ids $id
