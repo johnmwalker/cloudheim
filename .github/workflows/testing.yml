@@ -25,7 +25,7 @@ jobs:
           if [ -z "$ip" ]; then
             echo "No instance is running, continuing"
           else
-            id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[]" --output text`
+            id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].InstanceId" --output text`
             echo "Terminating instace ID ${id}"
           fi
 
