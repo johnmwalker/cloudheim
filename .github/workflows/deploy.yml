@@ -25,7 +25,7 @@ jobs:
       - name: Confirm AWS Install
         run: aws --version
 
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_CLI_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_CLI_KEY }}
