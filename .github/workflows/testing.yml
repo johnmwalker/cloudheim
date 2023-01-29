@@ -1,5 +1,5 @@
 
-name: Shutdown Cloudheim
+name: Testing for Cloudheim
 
 on:
   workflow_dispatch:
