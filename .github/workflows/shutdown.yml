@@ -29,7 +29,7 @@ jobs:
       - name: Get EC2 Instance
         id: ec2
         run: |
-          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].Id" --output text`
+          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIpAddress" --output text`
           echo ip="${ip}" >> $GITHUB_OUTPUT
 
       - name: Write PEM
@@ -47,5 +47,19 @@ jobs:
         if: steps.ec2.outputs.ip
         run: |
           id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].InstanceId" --output text`
-          echo "Terminating instace ID ${id}"
-          aws ec2 terminate-instances --instance-ids $id
+          # Warn on no id
+          if [ -z "$id" ]; then
+            echo "::error title=No ID Found::That's weird. Tell John."
+          else
+            echo "Terminating instace ID ${id}"
+            aws ec2 terminate-instances --instance-ids $id
+          fi
+        
+      - name: Warn if no instance
+        if: ${{ ! steps.ec2.outputs.ip }}
+        run: echo "::warning title=No Instance Was Running::There was no instance to shut down."
+
+      - name: Helpful error on failure
+        if: failure()
+        run: echo "::error title=Something Went Wrong::Please tell John."
+
