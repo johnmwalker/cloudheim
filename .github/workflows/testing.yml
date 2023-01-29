@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  shutdown:
-    name: Shutdown
+  testing:
+    name: Testing
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -22,11 +22,11 @@ jobs:
         id: ec2
         run: |
           ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIpAddress" --output text`
-          echo "${ip}"
           if [ -z "$ip" ]; then
-            echo "ip is ${ip}"
+            echo "No instance is running, continuing"
           else
-            echo "no instance running"
+            id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].Id" --output text`
+            echo "Terminating instace ID ${id}"
           fi
 
 

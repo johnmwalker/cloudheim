@@ -4,6 +4,11 @@ name: Shutdown Cloudheim
 on:
   workflow_dispatch:
 
+# Should ensure that only one workflow can be run at a time
+concurrency:
+  group: launch
+  cancel-in-progress: true
+
 jobs:
   shutdown:
     name: Shutdown
@@ -24,16 +29,23 @@ jobs:
       - name: Get EC2 Instance
         id: ec2
         run: |
-          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIpAddress" --output text`
+          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].Id" --output text`
           echo ip="${ip}" >> $GITHUB_OUTPUT
 
       - name: Write PEM
+        if: steps.ec2.outputs.ip
         run: |
           mkdir -p ${{runner.temp}}/.ssh
           echo "${{ secrets.VALHEIM_GITHUB_PEM }}" > ${{runner.temp}}/.ssh/my_key.pem
           chmod go= ${{runner.temp}}/.ssh/my_key.pem
 
       - name: Run shutdown
+        if: steps.ec2.outputs.ip
         run: ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem ubuntu@${{ steps.ec2.outputs.ip }} "cd /cloudheim; sudo git pull; sudo /cloudheim/shutdown.sh"
 
-
+      - name: Terminate EC2
+        if: steps.ec2.outputs.ip
+        run: |
+          id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].Id" --output text`
+          echo "Terminating instace ID ${id}"
+          aws ec2 terminate-instances --instance-ids $id

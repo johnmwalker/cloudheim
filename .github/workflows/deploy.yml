@@ -9,6 +9,11 @@ on:
         description: 'template_version: The version of the AWS EC2 Launch template'
         default: '24'
 
+# Should ensure that only one workflow can be run at a time
+concurrency:
+  group: launch
+  cancel-in-progress: true
+
 jobs:
   deploy:
     name: Deploy
@@ -29,4 +34,14 @@ jobs:
       - name: Launch EC2 Instance
         id: ec2
         run: |
-          aws_output=`aws ec2 run-instances --count 1 --launch-template LaunchTemplateId=lt-00b98ae78e8a14de0,Version=${{ inputs.template_version }}`
+          # Check for an existing instance
+          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIpAddress" --output text`
+
+          # Only launch if no instance is detected
+          if [ -z "$ip" ]; then
+            echo "No instance is running, continuing."
+            aws_output=`aws ec2 run-instances --count 1 --launch-template LaunchTemplateId=lt-00b98ae78e8a14de0,Version=${{ inputs.template_version }}`
+          else
+            echo "::warning title=Already Running!::An instance is already running!"
+          fi
+          
