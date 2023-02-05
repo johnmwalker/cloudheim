@@ -7,7 +7,7 @@ on:
       template_version:
         type: string
         description: 'template_version: The version of the AWS EC2 Launch template'
-        default: '24'
+        default: '25'
 
 # Should ensure that only one workflow can be run at a time
 concurrency:
