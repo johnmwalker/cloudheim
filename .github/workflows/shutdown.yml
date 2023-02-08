@@ -29,7 +29,7 @@ jobs:
       - name: Get EC2 Instance
         id: ec2
         run: |
-          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIpAddress" --output text`
+          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.large" --query "Reservations[].Instances[].PublicIpAddress" --output text`
           echo ip="${ip}" >> $GITHUB_OUTPUT
 
       - name: Write PEM
