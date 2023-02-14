@@ -3,6 +3,10 @@ name: Shutdown Cloudheim
 
 on:
   workflow_dispatch:
+    type_filter:
+      type: string
+      default: 't3a.large'
+      description: The instance type to filter on.
 
 # Should ensure that only one workflow can be run at a time
 concurrency:
@@ -29,7 +33,7 @@ jobs:
       - name: Get EC2 Instance
         id: ec2
         run: |
-          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.large" --query "Reservations[].Instances[].PublicIpAddress" --output text`
+          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=${{inputs.type_filter}}" --query "Reservations[].Instances[].PublicIpAddress" --output text`
           echo ip="${ip}" >> $GITHUB_OUTPUT
 
       - name: Write PEM
@@ -46,7 +50,7 @@ jobs:
       - name: Terminate EC2
         if: steps.ec2.outputs.ip
         run: |
-          id=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.large" --query "Reservations[].Instances[].InstanceId" --output text`
+          id=`aws ec2 describe-instances --filters "Name=instance-type,Values=${{inputs.type_filter}}" --query "Reservations[].Instances[].InstanceId" --output text`
           # Warn on no id
           if [ -z "$id" ]; then
             echo "::error title=No ID Found::That's weird. Tell John."
@@ -57,7 +61,7 @@ jobs:
         
       - name: Warn if no instance
         if: ${{ ! steps.ec2.outputs.ip }}
-        run: echo "::warning title=No Instance Was Running::There was no instance to shut down."
+        run: echo "::error title=No Instance Was Running::There was no instance to shut down."
 
       - name: Helpful error on failure
         if: failure()
