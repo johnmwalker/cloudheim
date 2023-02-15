@@ -3,10 +3,11 @@ name: Shutdown Cloudheim
 
 on:
   workflow_dispatch:
-    type_filter:
-      type: string
-      default: 't3a.large'
-      description: The instance type to filter on.
+    inputs:
+      type_filter:
+        type: string
+        default: 't3a.large'
+        description: The instance type to filter on.
 
 # Should ensure that only one workflow can be run at a time
 concurrency:
@@ -61,7 +62,7 @@ jobs:
         
       - name: Warn if no instance
         if: ${{ ! steps.ec2.outputs.ip }}
-        run: echo "::error title=No Instance Was Running::There was no instance to shut down."
+        run: echo "::error title=No Instance Was Running::There was no instance to shut down."; exit 1
 
       - name: Helpful error on failure
         if: failure()
