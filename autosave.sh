@@ -2,13 +2,18 @@
 
 cd /cloudheim
 
-targz=`ls -t /valheim/backups/*.tar.gz | head -1`
+dir="/valheim/backups"
 
-echo $targz
+unset -v latest
+for file in "$dir"/*.tar.gz; do
+  [[ $file -nt $latest ]] && latest=$file
+done
+
+echo $latest
 
 # Unpack the latest tar.gz to backups folder
-if [ -f $targz ]; then
-	tar -xzvf `ls -t /valheim/backups/*.tar.gz | head -1` -C /valheim/backups
+if [ -f $latest ]; then
+	tar -xzvf $latest -C /valheim/backups
 
 	# Move the db and fwl files
 	sudo mv `ls -t /valheim/backups/saves/worlds_local/*.db | head -1` /cloudheim/panerabread/worlds_local/panerabread.db
