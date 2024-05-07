@@ -14,11 +14,8 @@ sudo apt-get update
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# Move config file to docker volume location
-cp /cloudheim/panerabread/valheim_plus.cfg /valheim/
-
 # Move world files to docker volume location
-cp -r /cloudheim/panerabread/* /valheim/saves/
+cp -r /cloudheim/panerabreade/* /valheim/saves/
 
 # Begin the server uppening
 docker compose up -d
