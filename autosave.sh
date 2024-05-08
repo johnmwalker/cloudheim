@@ -22,7 +22,7 @@ if [ -f $latest ]; then
 	# Commit just the world files for the autosave
 	sudo git add panerabreade
 	sudo git commit -m 'AUTO: Autosave'
-	sudo git push
+	sudo gh repo sync
 
 	# Cleanup before the next
 	rm -rf /valheim/backups/saves
