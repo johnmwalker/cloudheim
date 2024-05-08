@@ -19,9 +19,11 @@ sudo apt-get install -y git
 && sudo apt update \
 && sudo apt install gh -y
 
+sudo gh auth login --with-token < mytoken.txt
+
 # Set up Git
-git clone https://user:pat@github.com/johnmwalker/cloudheim.git
-git config --global --add safe.directory /cloudheim
+git clone https://github.com/johnmwalker/cloudheim.git
+sudo git config --global --add safe.directory /cloudheim
 
 # This isn't good practice long term, but for now, I'm gonna manually include the webhook url and server password in the template
 cd cloudheim
