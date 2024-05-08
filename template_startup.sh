@@ -19,6 +19,7 @@ sudo apt-get install -y git
 && sudo apt update \
 && sudo apt install gh -y
 
+echo "mypat" | sudo tee mytoken.txt
 sudo gh auth login --with-token < mytoken.txt
 
 # Set up Git
