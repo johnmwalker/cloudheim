@@ -6,7 +6,7 @@ on:
     inputs:
       type_filter:
         type: string
-        default: 't3a.large'
+        default: 't3a.medium'
         description: The instance type to filter on.
 
 # Should ensure that only one workflow can be run at a time
@@ -20,12 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Confirm AWS Install
         run: aws --version
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.AWS_CLI_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_CLI_KEY }}

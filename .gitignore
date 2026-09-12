@@ -1,7 +1,6 @@
-panerabreade.*.old
-panerabreade_backup*
-panerabread.*.old
-panerabread_backup*
+rip_hermeto/worlds_local/*.old
+rip_hermeto_backup*
 *.pem
 get-docker.sh
 mytoken.txt
+.local-test/

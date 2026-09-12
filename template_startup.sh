@@ -21,6 +21,8 @@ sudo apt-get install -y git
 
 echo "mypat" | sudo tee mytoken.txt
 sudo gh auth login --with-token < mytoken.txt
+# Let git push authenticate through gh (used by autosave.sh / shutdown.sh)
+sudo gh auth setup-git
 
 # Set up Git
 git clone https://github.com/johnmwalker/cloudheim.git

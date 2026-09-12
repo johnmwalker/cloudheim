@@ -1,0 +1,5 @@
+# Force LF for text files consumed by Linux (cloud-init, docker env_file)
+* text eol=lf
+
+# World data is binary/chunked — never let git touch line endings
+rip_hermeto/** -text

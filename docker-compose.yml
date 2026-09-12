@@ -1,15 +1,22 @@
-version: "3"
 services:
   valheim:
     platform: linux/amd64
-    image: mbround18/valheim:latest
+    image: mbround18/valheim:3
+    # Rootless note: upstream issue mbround18/valheim-docker#1507 — the image
+    # bakes the steam user as uid 111, so the docs' suggested
+    # user: "1000:1000" fails its own preflight write check until
+    # https://github.com/mbround18/valheim-docker/pull/ (see #1507) merges.
+    # Run as the image default (steam, uid 111) until then; revisit if the
+    # host /valheim dirs are ever owned by 1000:1000 instead of 111:1000.
+    user: "111:1000"
+    stop_signal: SIGINT
     ports:
-      - 2456:2456/udp
-      - 2457:2457/udp
-      - 2458:2458/udp
+      - "2456:2456/udp"
+      - "2457:2457/udp"
+      - "2458:2458/udp"
     env_file:
       - env.list
     volumes:
       - /valheim/saves:/home/steam/.config/unity3d/IronGate/Valheim
+      - /valheim/server:/home/steam/valheim
       - /valheim/backups:/home/steam/backups
-      
