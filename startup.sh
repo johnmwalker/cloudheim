@@ -24,7 +24,7 @@ sudo chmod -R 775 /valheim/saves /valheim/server /valheim/backups
 if [ -d /cloudheim/rip_hermeto/worlds_local ]; then
   sudo cp -rf /cloudheim/rip_hermeto/. /valheim/saves/
 fi
-sudo chown -R 111:1000 /valheim/saves /valheim/server
+sudo chown -R 111:1000 /valheim/saves /valheim/server /valheim/backups
 
 # Begin the server uppening
 docker compose up -d
