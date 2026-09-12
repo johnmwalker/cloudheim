@@ -7,7 +7,11 @@ on:
       template_version:
         type: string
         description: 'template_version: The version of the AWS EC2 Launch template'
-        default: '32'
+        default: '33'
+      instance_type:
+        type: string
+        description: 'Instance type to launch / detect'
+        default: 't3a.large'
 
 # Should ensure that only one workflow can be run at a time
 concurrency:
@@ -35,7 +39,7 @@ jobs:
         id: ec2
         run: |
           # Check for an existing instance
-          ip=`aws ec2 describe-instances --filters "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIpAddress" --output text`
+          ip=`aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-type,Values=${{ inputs.instance_type }}" --query "Reservations[].Instances[].PublicIpAddress" --output text`
 
           # Only launch if no instance is detected
           if [ -z "$ip" ]; then

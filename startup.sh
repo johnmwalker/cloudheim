@@ -29,7 +29,37 @@ sudo chown -R 111:1000 /valheim/saves /valheim/server
 # Begin the server uppening
 docker compose up -d
 
-# Launch autosave script
-sudo watch -n 900 ./autosave.sh
+# Autosave every 15 min via systemd (watch/ncurses has no TERM under
+# cloud-init and dies; a unit also survives reboots and logs to journald)
+sudo tee /etc/systemd/system/cloudheim-autosave.service >/dev/null <<'UNIT'
+[Unit]
+Description=Cloudheim autosave (extract latest backup, commit world to git)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/cloudheim
+ExecStart=/cloudheim/autosave.sh
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+sudo tee /etc/systemd/system/cloudheim-autosave.timer >/dev/null <<'UNIT'
+[Unit]
+Description=Run cloudheim autosave every 15 minutes
+
+[Timer]
+OnBootSec=20min
+OnUnitActiveSec=15min
+Unit=cloudheim-autosave.service
+
+[Install]
+WantedBy=timers.target
+UNIT
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now cloudheim-autosave.timer
 
 # less /var/log/cloud-init-output.log # then press capital F
