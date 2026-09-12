@@ -1,5 +1,7 @@
 #!/bin/bash
 
+HOME="${HOME:-/root}"
+
 cd /cloudheim
 sudo git pull
 
