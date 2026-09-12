@@ -3,6 +3,14 @@
 # This is where we should be by default, but never trust defaults
 cd /cloudheim
 
+# Fail fast if the password was never injected by the launch template
+# (odin otherwise fails AFTER the multi-GB download with a cryptic error)
+if ! grep -q '^PASSWORD=..*' env.list; then
+  echo "ERROR: env.list has no PASSWORD line. The launch-template user-data" >&2
+  echo "should have appended it. Aborting before the server install." >&2
+  exit 1
+fi
+
 chmod +x shutdown.sh
 chmod +x autosave.sh
 
