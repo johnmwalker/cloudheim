@@ -32,6 +32,18 @@ sudo chmod -R 775 /valheim/saves /valheim/server /valheim/backups
 if [ -d /cloudheim/rip_hermeto/worlds_local ]; then
   sudo cp -rf /cloudheim/rip_hermeto/. /valheim/saves/
 fi
+
+# Seed the ValheimPlus config into the game-install volume. Must run BEFORE
+# the chown below and BEFORE docker compose up (VP reads it at server start;
+# on first boot Odin/BepInEx would otherwise generate a default one instead).
+# The server dir does not exist until Odin's first install, so only copy when
+# it does (subsequent boots); fresh instances pick the file up on boot #2, or
+# pre-create the dir so it lands on boot #1.
+if [ -f /cloudheim/org.bepinex.plugins.valheim_plus.cfg ]; then
+  sudo mkdir -p /valheim/server/BepInEx/config
+  sudo cp /cloudheim/org.bepinex.plugins.valheim_plus.cfg \
+          /valheim/server/BepInEx/config/org.bepinex.plugins.valheim_plus.cfg
+fi
 sudo chown -R 111:1000 /valheim/saves /valheim/server /valheim/backups
 
 # Begin the server uppening
