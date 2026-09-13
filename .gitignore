@@ -4,3 +4,4 @@ rip_hermeto_backup*
 get-docker.sh
 mytoken.txt
 .local-test/
+.env
