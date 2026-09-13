@@ -1,0 +1,93 @@
+name: Dump Cloudheim Container Logs
+
+on:
+  workflow_dispatch:
+    inputs:
+      tail_lines:
+        type: string
+        description: 'Number of lines to dump from the end of the container log (empty = all)'
+        default: '500'
+
+concurrency:
+  group: launch
+  cancel-in-progress: false
+
+jobs:
+  logs:
+    name: Dump container logs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm AWS Install
+        run: aws --version
+
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_CLI_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_CLI_KEY }}
+          aws-region: us-east-1
+
+      - name: Find Running Instance
+        id: ec2
+        run: |
+          # Same filter discipline as deploy/shutdown: running state AND instance
+          # type (type-only filters have historically matched stopped instances)
+          ip=`aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-type,Values=t3a.medium" --query "Reservations[].Instances[].PublicIpAddress" --output text`
+          if [ -z "$ip" ] || [ "$ip" == "None" ]; then
+            echo "::error title=No Instance::No running t3a.medium instance found - the server is offline."
+            exit 1
+          fi
+          echo "ip=${ip}" >> "$GITHUB_OUTPUT"
+          echo "Server instance: ${ip}"
+
+      - name: Write PEM
+        run: |
+          mkdir -p ${{runner.temp}}/.ssh
+          echo "${{ secrets.VALHEIM_GITHUB_PEM }}" > ${{runner.temp}}/.ssh/my_key.pem
+          chmod go= ${{runner.temp}}/.ssh/my_key.pem
+
+      - name: Dump Container Logs
+        run: |
+          TAIL="${{ inputs.tail_lines }}"
+          if [ -z "$TAIL" ]; then
+            TAIL="all"
+          fi
+
+          echo "=== Cloudheim container logs from ${{ steps.ec2.outputs.ip }} (tail: ${TAIL}) ==="
+          if [ "$TAIL" == "all" ]; then
+            ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem \
+              ubuntu@${{ steps.ec2.outputs.ip }} \
+              "sudo docker logs --timestamps cloudheim-valheim-1 2>&1"
+          else
+            ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem \
+              ubuntu@${{ steps.ec2.outputs.ip }} \
+              "sudo docker logs --timestamps --tail ${TAIL} cloudheim-valheim-1 2>&1"
+          fi
+
+      - name: Upload Logs as Artifact
+        if: always()
+        run: |
+          TAIL="${{ inputs.tail_lines }}"
+          if [ -z "$TAIL" ]; then
+            TAIL="all"
+          fi
+          mkdir -p ${{runner.temp}}/logs
+          if [ "$TAIL" == "all" ]; then
+            ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem \
+              ubuntu@${{ steps.ec2.outputs.ip }} \
+              "sudo docker logs --timestamps cloudheim-valheim-1 2>&1" \
+              > ${{runner.temp}}/logs/cloudheim-container.log || true
+          else
+            ssh -o "StrictHostKeyChecking=no" -i ${{runner.temp}}/.ssh/my_key.pem \
+              ubuntu@${{ steps.ec2.outputs.ip }} \
+              "sudo docker logs --timestamps --tail ${TAIL} cloudheim-valheim-1 2>&1" \
+              > ${{runner.temp}}/logs/cloudheim-container.log || true
+          fi
+          ls -la ${{runner.temp}}/logs/
+
+      - name: Upload Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudheim-container-logs
+          path: ${{runner.temp}}/logs/cloudheim-container.log
+          retention-days: 7
