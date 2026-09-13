@@ -1,1 +1,8 @@
 // List admin players ID  ONE per line
+// V_ prefix required for Valheim 1.0 (unprefixed entries do not match)
+V_76561198091329962
+V_76561198111755430
+V_76561199004843961
+V_76561198043957632
+V_76561198272080928
+V_76561198087590932
