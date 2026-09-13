@@ -22,6 +22,10 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    # secrets context is not readable in step-level `if:` conditions, so the
+    # secret is surfaced at job level and checked via env. instead.
+    env:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -42,10 +46,41 @@ jobs:
           ip=`aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-type,Values=${{ inputs.instance_type }}" --query "Reservations[].Instances[].PublicIpAddress" --output text`
 
           # Only launch if no instance is detected
-          if [ -z "$ip" ]; then
+          if [ -z "$ip" ] || [ "$ip" == "None" ]; then
             echo "No instance is running, continuing."
             aws_output=`aws ec2 run-instances --count 1 --launch-template LaunchTemplateId=lt-00b98ae78e8a14de0,Version=${{ inputs.template_version }}`
+
+            # Wait for the new instance to have a public IP assigned
+            for i in $(seq 1 30); do
+              sleep 10
+              ip=`aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-type,Values=${{ inputs.instance_type }}" --query "Reservations[].Instances[].PublicIpAddress" --output text`
+              if [ -n "$ip" ] && [ "$ip" != "None" ]; then
+                break
+              fi
+            done
           else
             echo "::warning title=Already Running!::An instance is already running!"
           fi
-          
+
+          if [ -z "$ip" ] || [ "$ip" == "None" ]; then
+            echo "::error title=No IP Found::Instance launched but no public IP was assigned within 5 minutes."
+            exit 1
+          fi
+
+          echo "ip=${ip}" >> "$GITHUB_OUTPUT"
+
+      - name: Report Public IP
+        run: |
+          echo "=========================================="
+          echo "Cloudheim server public IP: ${{ steps.ec2.outputs.ip }}"
+          echo "=========================================="
+
+      - name: Post IP to Discord
+        if: env.DISCORD_WEBHOOK_URL != ''
+        env:
+          SERVER_IP: ${{ steps.ec2.outputs.ip }}
+        run: |
+          curl -sf -X POST -H "Content-Type: application/json" \
+            -d "{\"content\": \"Cloudheim server is up — public IP: `${{ env.SERVER_IP }}`\"}" \
+            "$DISCORD_WEBHOOK_URL" \
+            || echo "::warning title=Discord Webhook Failed::Could not post server IP to Discord."

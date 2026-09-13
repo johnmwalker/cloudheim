@@ -2,7 +2,14 @@
 
 cd /cloudheim
 
+# systemd runs this without HOME, which breaks git's credential-helper
+# lookup (fatal: could not read Username). Point it at root's config
+# where `gh auth setup-git` wrote the credential helper.
+export HOME="${HOME:-/root}"
+
 dir="/valheim/backups"
+
+
 world="rip_hermeto"
 
 # Valheim 1.0 stores a world as a directory (worlds_local/<world>/ holding
