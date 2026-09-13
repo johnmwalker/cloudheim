@@ -72,7 +72,7 @@ if [ "${1:-}" = "--restart" ]; then
   # Container name is compose-prefixed with the repo dir name (cloudheim-valheim-1)
   echo
   echo "Container recreated. Follow the boot with:"
-  echo "  docker logs -f cloudheim-valheim-1"
+  echo "  sudo docker logs -f cloudheim-valheim-1"
 else
   echo
   echo "Repo updated, secrets re-applied. Apply to the container with:"
