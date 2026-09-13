@@ -43,16 +43,17 @@ elif [ ! -s "$SECRETS_FILE" ]; then
   exit 1
 fi
 
-# --- 2. Clean env.list so the pull can fast-forward -------------------------
-# Local env.list modifications are secrets-only by design, so discarding
-# them is safe: they are already saved in $SECRETS_FILE.
-git checkout -- env.list
-
-# --- 3. Pull (ff-only: fail loudly instead of merging a weird tree) ---------
-if ! git pull --ff-only; then
-  echo "ERROR: git pull failed. Usually staged/modified world files from" >&2
-  echo "the autosave timer. Check 'git status'; commit or reset the world" >&2
-  echo "files (keep only saves with a _main.*.ok marker), then re-run." >&2
+# --- 2. Pull, replaying local autosave commits on top of origin -------------
+# The autosave timer commits world saves locally every 15 min, so the local
+# branch regularly diverges from origin by the time a manual pull happens.
+# --rebase replays those linear autosave commits onto origin/main (always
+# correct for this repo's flow); --autostash handles any dirty files
+# (env.list secrets were already rescued in step 1; EOL-noise on the VP
+# config is restored as-is after the pull, matching instance behavior).
+if ! git pull --rebase --autostash; then
+  echo "ERROR: git pull --rebase failed. Inspect with 'git status' and" >&2
+  echo "'git log --oneline main origin/main'. If a rebase is in progress," >&2
+  echo "finish or abort it (git rebase --continue / --abort), then re-run." >&2
   exit 1
 fi
 
