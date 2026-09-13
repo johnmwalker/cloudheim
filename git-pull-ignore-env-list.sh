@@ -69,8 +69,10 @@ grep -cE '^(PASSWORD|WEBHOOK_URL)=..*' env.list | xargs echo "secret lines in en
 if [ "${1:-}" = "--restart" ]; then
   bash startup.sh
   docker compose up -d --force-recreate
+  # Container name is compose-prefixed with the repo dir name (cloudheim-valheim-1)
   echo
-  echo "Container recreated. Follow the boot with: docker logs -f valheim"
+  echo "Container recreated. Follow the boot with:"
+  echo "  docker logs -f cloudheim-valheim-1"
 else
   echo
   echo "Repo updated, secrets re-applied. Apply to the container with:"
