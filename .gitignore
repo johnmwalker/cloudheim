@@ -5,3 +5,4 @@ get-docker.sh
 mytoken.txt
 .local-test/
 .env
+Justfile
