@@ -1,10 +1,10 @@
 <unity_prefs version_major="1" version_minor="1">
-	<pref name="unity.player_session_count" type="string">MTc=</pref>
-	<pref name="unity_connect.mega_session_id" type="string">MWVjM2VjYmYtMjViNi05MzMyLTliOTAtYWQyYWYwNTVkZjI2</pref>
+	<pref name="unity.player_session_count" type="string">MTg=</pref>
+	<pref name="unity_connect.mega_session_id" type="string">NjEzMzFlNWYtNTJkNy05YmEyLTFhNWItNWEwNTYwZTcxNzBl</pref>
 	<pref name="ConsoleBindings" type="string"></pref>
 	<pref name="ShouldTryAutoLogin" type="int">1</pref>
-	<pref name="unity.player_sessionid" type="string">OTUxNzY2NTQxNTczOTYzNTQ1</pref>
-	<pref name="unity_connect.session_id" type="string">NTg0NGU1OGUtNzIxYy01ZDAwLTU4MTktNjMyNzFlN2ViZWFm</pref>
+	<pref name="unity.player_sessionid" type="string">ODk0MDU4MDMyNzYxMDgwMTE3MA==</pref>
+	<pref name="unity_connect.session_id" type="string">ZDk4OTRmYzEtMzdlOS01NGRmLTc4NjMtMjMwODljOWU4ZGJl</pref>
 	<pref name="unity_connect.installation_id" type="string">MGE0YzA5YzktODgwMC03ODE3LTlhYzgtZTIyMmE2MzEwNzY5</pref>
 	<pref name="AttackTowardsPlayerLookDir" type="int">0</pref>
 </unity_prefs>
