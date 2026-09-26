@@ -82,4 +82,33 @@ UNIT
 sudo systemctl daemon-reload
 sudo systemctl enable --now cloudheim-autosave.timer
 
+# Final-save hook: runs shutdown.sh when the instance is shut down.
+# EC2 terminate sends an ACPI shutdown event, which systemd services as a
+# normal shutdown; this unit's ExecStop fires during it, BEFORE the network
+# and docker are torn down (stop order is reverse of start order, and
+# ordering After=network-online.target/docker.service guarantees this unit
+# stops first). The workflow's SSH'd shutdown.sh remains the primary path —
+# this unit is the safety net for out-of-band terminates (console/CLI).
+sudo tee /etc/systemd/system/cloudheim-shutdown.service >/dev/null <<'UNIT'
+[Unit]
+Description=Cloudheim final save on shutdown (commit world, push to git)
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/cloudheim
+ExecStart=/bin/true
+ExecStop=/cloudheim/shutdown.sh
+# git push of a large chunk upload can outlast the 90s default stop timeout
+TimeoutStopSec=10min
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now cloudheim-shutdown.service
+
 # less /var/log/cloud-init-output.log # then press capital F

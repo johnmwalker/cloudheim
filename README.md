@@ -38,6 +38,14 @@ Valheim dedicated server, deployed to EC2 via GitHub Actions. Container image:
   GitHub (no-op if nothing changed).
 - `shutdown.yml` SSHes in, runs `shutdown.sh` (stop container, copy saves,
   push `AUTO: Shutdown save`), then terminates the instance.
+- During the terminate itself, `startup.sh` installs
+  `cloudheim-shutdown.service`: an ExecStop hook systemd runs on any
+  graceful shut down (EC2 terminate sends ACPI), which calls `shutdown.sh`
+  again — the guard at the top of that script dedupes the two triggers.
+  Terminates issued with "Skip OS shutdown" / `--skip-os-shutdown`, force
+  terminate, and hardware failure skip systemd entirely; the 3-min
+  autosave timer is the only backstop there (AWS does not guarantee guest
+  shutdown scripts run).
 - Old `gh repo sync` line was a no-op (it syncs a fork from its parent); the
   autosave loop has been switched to plain `git push` — `template_startup.sh`
   now also runs `gh auth setup-git` so pushes authenticate.

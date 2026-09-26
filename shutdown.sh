@@ -2,6 +2,19 @@
 
 HOME="${HOME:-/root}"
 
+# Runs from two places: shutdown.yml's SSH step (primary, visible in the
+# workflow log) and the cloudheim-shutdown.service ExecStop (safety net —
+# EC2 terminate fires it via systemd's shutdown sequence). Every terminate
+# also passes through systemd, so both triggers fire on a workflow-driven
+# shutdown; the marker file makes the second pass a no-op instead of a
+# second commit. /run is tmpfs, so the marker resets each boot.
+# CLOUDHEIM_SHUTDOWN_FORCE=1 bypasses the guard (e.g. manual rerun after a
+# failed push).
+if [ -e /run/cloudheim-shutdown.done ] && [ "${CLOUDHEIM_SHUTDOWN_FORCE:-0}" != "1" ]; then
+  echo "Shutdown save already committed this boot; skipping."
+  exit 0
+fi
+
 cd /cloudheim
 sudo git pull
 
@@ -40,3 +53,9 @@ else
   sudo git commit -m "AUTO: Shutdown save"
   sudo git push
 fi
+
+# Mark the save as done for this boot (dedupes the workflow SSH path vs the
+# systemd ExecStop path on the same shutdown). /run is tmpfs and resets on
+# reboot. Written even if push failed: this is a once-per-boot guard, and
+# the next autosave tick still commits whatever was missed.
+: > /run/cloudheim-shutdown.done
