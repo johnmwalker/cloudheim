@@ -68,11 +68,11 @@ UNIT
 
 sudo tee /etc/systemd/system/cloudheim-autosave.timer >/dev/null <<'UNIT'
 [Unit]
-Description=Run cloudheim autosave every 15 minutes
+Description=Run cloudheim autosave every 3 minutes
 
 [Timer]
-OnBootSec=20min
-OnUnitActiveSec=15min
+OnBootSec=11min
+OnUnitActiveSec=3min
 Unit=cloudheim-autosave.service
 
 [Install]
