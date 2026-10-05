@@ -1,10 +1,10 @@
 <unity_prefs version_major="1" version_minor="1">
-	<pref name="unity.player_session_count" type="string">Mjc=</pref>
-	<pref name="unity_connect.mega_session_id" type="string">MDA0NDAzOGEtODU1Yy01ZDFlLTViNzMtYmVjN2ZkYjY3ZWVj</pref>
+	<pref name="unity.player_session_count" type="string">Mjg=</pref>
+	<pref name="unity_connect.mega_session_id" type="string">ZDgwNzZjNTMtNzhjMS1mZDE5LWE5YzEtMDcwMDgxNjNkY2Vh</pref>
 	<pref name="ConsoleBindings" type="string"></pref>
 	<pref name="ShouldTryAutoLogin" type="int">1</pref>
-	<pref name="unity.player_sessionid" type="string">Nzc2OTM1OTE2NTA3MzkxNDU3NQ==</pref>
-	<pref name="unity_connect.session_id" type="string">NzQ2MmRkNGUtMTgwYy1kNmJhLTY4ODEtYTFlODljMzI2NWI3</pref>
+	<pref name="unity.player_sessionid" type="string">NjY3NjE3NDk5MTAzOTY0Nzk1Nw==</pref>
+	<pref name="unity_connect.session_id" type="string">NDU5Nzk4OGEtNmUzNy1iZDFjLWI4MTMtZGMxNGMxMmI3NzY4</pref>
 	<pref name="unity_connect.installation_id" type="string">MGE0YzA5YzktODgwMC03ODE3LTlhYzgtZTIyMmE2MzEwNzY5</pref>
 	<pref name="AttackTowardsPlayerLookDir" type="int">0</pref>
 </unity_prefs>
